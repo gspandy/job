@@ -43,11 +43,34 @@
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 
-		<!-- c3p0 -->
+		<!-- jdbc -->
 		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.drools</groupId>
+			<artifactId>drools-compiler</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- mybatis-spring -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
