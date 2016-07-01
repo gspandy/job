@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<util:properties id="p_db" location="classpath:jdbc.properties" />
+
+	<!-- part 1 :for datasource -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="name" value="#{p_db['db.name']}" />
+		<property name="url" value="#{p_db['db.url']}" />
+		<property name="username" value="#{p_db['db.username']}" />
+		<property name="password" value="#{p_db['db.password']}" />
+		<property name="driverClassName" value="#{p_db['db.driverClassName']}" />
+		<property name="initialSize" value="#{p_db['db.initialSize']}" />
+		<property name="maxActive" value="#{p_db['db.maxActive']}" />
+		<property name="minIdle" value="#{p_db['db.minIdle']}" />
+		<property name="maxWait" value="#{p_db['db.maxWait']}" />
+		<property name="useUnfairLock" value="#{p_db['db.useUnfairLock']}" />
+		<property name="validationQuery" value="#{p_db['db.validationQuery']}" />
+		<property name="testOnBorrow" value="#{p_db['db.testOnBorrow']}" />
+		<property name="testOnReturn" value="#{p_db['db.testOnReturn']}" />
+		<property name="testWhileIdle" value="#{p_db['db.testWhileIdle']}" />
+		<property name="timeBetweenEvictionRunsMillis" value="#{p_db['db.timeBetweenEvictionRunsMillis']}" />
+		<property name="minEvictableIdleTimeMillis" value="#{p_db['db.minEvictableIdleTimeMillis']}" />
+		<property name="filters" value="#{p_db['db.filters']}" />
+	</bean>
+
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mybatis-mapper/*.xml" />
+	</bean>
+
+	<!-- scope must be "prototype" when junit -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- part 2 :for tx -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="detail*" propagation="SUPPORTS" />
+			<tx:method name="visit*" propagation="SUPPORTS" />
+			<tx:method name="get*" propagation="SUPPORTS" />
+			<tx:method name="find*" propagation="SUPPORTS" />
+			<tx:method name="check*" propagation="SUPPORTS" />
+			<tx:method name="list*" propagation="SUPPORTS" />
+			<tx:method name="*" propagation="REQUIRED" rollback-for="exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="txoperation" expression="execution(* com.xxl.job.admin.service.impl.*.*(..))" />
+		<aop:advisor pointcut-ref="txoperation" advice-ref="txAdvice" />
+	</aop:config>
+
+</beans>
