@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<util:properties id="p_db" location="classpath:jdbc.properties" />
+	<util:properties id="p_db" location="classpath:/properties/jdbc.properties" />
 
 	<!-- part 1 :for datasource -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">

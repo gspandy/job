@@ -12,7 +12,7 @@
 		<property name="autoStartup" value="true" />	<!--自动启动 -->
 		<property name="startupDelay" value="20" />		<!--延时启动 -->
 		<property name="applicationContextSchedulerContextKey" value="applicationContextKey" />
-		<property name="configLocation" value="classpath:quartz.properties" />
+		<property name="configLocation" value="classpath:/properties/quartz.properties" />
 	</bean>
 
 	<!-- 协同-调度器 -->
